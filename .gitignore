@@ -3,3 +3,9 @@ uv.lock
 .venv
 .env
 __pycache__/
+terraform/
+.terraform/
+*.tf
+*.tfvars
+backend/test_terraform.py
+terraform/main.tf
