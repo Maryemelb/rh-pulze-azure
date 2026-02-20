@@ -124,6 +124,9 @@ def processing():
         df[feature]= df[feature].apply(lambda x:[word for word in x if word not in stopwrords_en])
     print("stopwords")
     df.drop(columns= ["Job Title", "index","Rating"])
+    # with open("./data/cleaned_jobs.csv", "wb") as f:
+    #     f.write(df)
+    df.to_csv("backend/app/data/cleaned_jobs.csv", index=False)
     return df
 
 df = processing()
