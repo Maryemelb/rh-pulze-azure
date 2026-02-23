@@ -23,7 +23,6 @@ async def create_new_user(db: Session, user: CreateUser):
     hashed_password= hash_password(user.password)
     new_user= User(
         id= uuid.uuid4(),
-        name= user.name,
         email= user.email,
         hashedPassword= hashed_password
 
@@ -35,8 +34,6 @@ async def create_new_user(db: Session, user: CreateUser):
     return UserResponse(
         id= str(new_user.id),
         email= new_user.email,
-        is_verified= new_user.is_verified,
-        is_active=new_user.is_active,
         role= new_user.role
     )
 
