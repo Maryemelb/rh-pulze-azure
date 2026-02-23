@@ -9,4 +9,6 @@ terraform/
 *.tf
 *.tfvars
 backend/test_terraform.py
+backend/test_zure_model.py
 terraform/main.tf
+backend/app/data/.~lock.cleaned_jobs.csv#

@@ -23,9 +23,9 @@ def retrieve_job_role(title):
     elif 'scientist' in title or 'research' in title or 'medical lab' in title or 'human factors' in title or 'purification' in title:
         return 'Scientist'
     elif 'software engineer' in title or 'engineering specialist' in title or 'computer scientist' in title or 'developer' in title:
-        return 'Software / Engineer'
+        return 'Software Engineer'
     elif 'analytics manager' in title or 'data science manager' in title or 'director' in title or 'vp' in title:
-        return 'Analytics / Manager'
+        return 'Analytics Manager'
     else:
         return 'Other'
 
