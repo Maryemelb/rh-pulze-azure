@@ -7,6 +7,7 @@ from backend.app.routes.login import router as loginRouter
 from backend.app.routes.register import router as registerRouter
 from backend.app.routes.health import router as healthRouter
 from backend.app.routes.jobs import router as jobsRouter
+from backend.app.routes.predict import router as predictSalaryRouter
 from backend.app.routes.extract_skills import router as extractSkillsRouter
 
 app = FastAPI()
@@ -19,7 +20,8 @@ Base.metadata.create_all(bind=engine)
 app.include_router(loginRouter)
 app.include_router(registerRouter)
 app.include_router(healthRouter)
-
+app.include_router(predictSalaryRouter)
+app.include_router(jobsRouter)
 
 # if __name__ == "__main__":
 #     main()
