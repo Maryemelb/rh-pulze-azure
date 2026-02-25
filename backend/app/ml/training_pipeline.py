@@ -10,6 +10,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score, mean_absolute_error
 from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
+from backend.app.ml.data_processing.embedding import generate_embeddings
 
 df=processing()
 
@@ -28,6 +29,7 @@ def frequency_encoding(X):
     return X
 
 frequency_transformer = FunctionTransformer(frequency_encoding)
+text_transformer= FunctionTransformer(generate_embeddings)
 
 # model=RandomForestRegressor(max_depth=20, verbose=2)
 
@@ -50,12 +52,13 @@ categorial_columns= ['Company Name','Location','Competitors', 'Headquarters', 'S
 hot_encode_columns= ["Type of ownership"]
 ordinal_encode_columns=["Size"]
 frequency_encode_columns= ["Sector","Company Name","Headquarters","Location","Competitors","Industry"]
-
+embedding_columns=["description"]
 preprocessor = ColumnTransformer(
     transformers=[
         ('hot', OneHotEncoder(handle_unknown='ignore'), hot_encode_columns),
         ('ordinal', OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value=-1), ordinal_encode_columns),
-        ('frequency', frequency_transformer, frequency_encode_columns)  # fix here
+        ('frequency', frequency_transformer, frequency_encode_columns), # fix here
+        ('frequency', text_transformer, embedding_columns)  # fix here
 
     ],
     remainder='passthrough'

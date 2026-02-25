@@ -7,9 +7,8 @@ from tqdm import tqdm
 import os
 from dotenv import load_dotenv
 load_dotenv()
-
 ENDPOINT = os.getenv('AZURE_ENDPOINT')
-KEY = os.getenv('AZURE_KEY')
+KEY = os.getenv('KEY')
 
 
 def authenticate_client():
@@ -53,8 +52,7 @@ def run_ner_extraction(data_path, output_path, limit=100):
     df_subset["extracted_skills"] = all_skills
     df_subset.to_csv(output_path, index=False)
     print(f"\nExtraction complete. Saved {len(df_subset)} records to {output_path}")
-    #added
-    return df_subset["extracted_skills"]
 
-# if __name__ == "__main__":
-#     run_ner_extraction("backend/app/data/cleaned_jobs.csv", "backend/app/data/dataset_with_skills.csv", limit=100)
+
+if __name__ == "__main__":
+    run_ner_extraction("backend/app/data/cleaned_jobs.csv", "backend/app/data/dataset_with_skills.csv", limit=5)

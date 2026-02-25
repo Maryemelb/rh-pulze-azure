@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 
 
+
 def retrieve_job_role(title):
     title= title.lower()
     if 'data scientist' in title or 'decision scientist' in title:

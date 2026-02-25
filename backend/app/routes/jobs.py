@@ -11,6 +11,11 @@ router=APIRouter(
 )
 
 @router.post('/')
-async def signin(user: SigninUser, response:Response,db= Depends(getdb)):
-    await login(db,user, response)
+async def addjob(user: SigninUser, response:Response,db= Depends(getdb)):
+    await addjob(db,user, response)
+    return 'succesfully'
+
+@router.get('/')
+async def getjobs(user: SigninUser, response:Response,db= Depends(getdb)):
+    await getjobs(db,user, response)
     return 'succesfully'
