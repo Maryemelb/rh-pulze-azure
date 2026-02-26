@@ -1,0 +1,39 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile
+    container_name: backend-rh-pulze
+    volumes:
+      - ./backend:/app/backend
+      - ./infra/airflow:/app/infra/airflow
+      - ./infra/mlflow:/app/infra/mlflow
+      - ./.github:/app/.github
+      - ./data:/app/data
+
+    working_dir: /app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - CHROMA_PATH=/app/vector_db/chroma_storage/embedding_db
+    restart: on-failure
+
+  frontend:
+    build: ../frontend-rh-pulze
+    image: "frontend_rh_pulze"
+    ports: 
+      - "3001:3000"
+    environment:
+      - NEXT_PUBLIC_BACKEND_API=http://backend:8000
+    volumes:
+      - ../frontend-rh-pulze/src:/app/src  
+      - ../frontend-rh-pulze/public:/app/public 
+      - ../frontend-rh-pulze/package.json:/app/package.json  
+      - ../frontend-rh-pulze/package-lock.json:/app/package-lock.json
+    depends_on:
+      - backend
+volumes:
+  chroma_data:
+  postgres_data:
+  
+  
+  

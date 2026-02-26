@@ -11,6 +11,5 @@ router=APIRouter(
 )
 
 @router.post('/')
-async def signin(user: SigninUser, response:Response,db= Depends(getdb)):
-    await login(db,user, response)
+async def health(user: SigninUser, response:Response,db= Depends(getdb)):
     return 'succesfully '

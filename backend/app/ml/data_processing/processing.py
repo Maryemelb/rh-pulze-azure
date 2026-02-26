@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 
 
+
 def retrieve_job_role(title):
     title= title.lower()
     if 'data scientist' in title or 'decision scientist' in title:
@@ -38,7 +39,7 @@ def check_is_senior(title):
        return 0
 
 def processing():
-    
+   
     current_dir = Path(__file__).parent
     data_path = current_dir.parent.parent / "data" / "uncleaned-ds-jobs.csv"
     df = pd.read_csv(data_path)
@@ -65,7 +66,6 @@ def processing():
         lambda x: x.mode()[0] if not x.mode().empty else None
     )
     mod_global_rev= df['Revenue'].mode()[0]
-    revenue_mode_by_year.shape
     revenue_mode_by_year=revenue_mode_by_year.fillna(mod_global_rev)
     revenue_mode_by_year.shape
     
@@ -80,7 +80,6 @@ def processing():
     uper_bound= {}
 
     numeric_data= df[["Founded","Revenue"]].copy()
-    numeric_data.head()
     for col in numeric_data.columns:
         print(f'handle outlier for {col}')
         q1_list[col]=np.percentile(numeric_data[col], 25)
@@ -123,14 +122,41 @@ def processing():
     for feature in nlp_features:
         df[feature]= df[feature].apply(lambda x:[word for word in x if word not in stopwrords_en])
     print("stopwords")
-    df.drop(columns= ["Job Title", "index","Rating"])
+    df.drop(columns=["job_title", "index", "rating"], inplace=True, errors="ignore")
     # with open("./data/cleaned_jobs.csv", "wb") as f:
     #     f.write(df)
+    cleaned_path = Path(__file__).parent.parent / "data" / "cleaned_jobs.csv"
     df.to_csv("backend/app/data/cleaned_jobs.csv", index=False)
     return df
 
-df = processing()
-print(df.head())
+# df = processing()
+# print(df.head())
 
 
-    
+def process_single_row(df) :
+
+    for col in df.columns:
+       if df[col].dtype == object:
+          df[col]= df[col].astype("string")
+    df["job_role"]= df["Job Title"].apply(retrieve_job_role)
+    df["is_senior"]= df["Job Title"].apply(check_is_senior)
+  
+    df["Job Description"]= df["Job Description"].str.lower()
+
+    df["Revenue"]=df["Revenue"].apply(lambda x:
+                            (np.median([ float(i) for i in re.findall(r"\d+", x)])* 
+                            (1000 if 'billion' in x.lower() else 1)) 
+                            if isinstance(x, str) and re.findall(r"\d+", x) 
+                            else np.nan
+                            )
+
+    # 2. Tokenization & detele ponctuations
+
+    tokenizer= RegexpTokenizer(r'\w+')
+    df["Job Description"]= df["Job Description"].apply(lambda x: tokenizer.tokenize(str(x)))
+    nltk.download('stopwords')
+    stopwrords_en= stopwords.words('english')
+    df["Job Description"]= df["Job Description"].apply(lambda x:[word for word in x if word not in stopwrords_en])
+    print("stopwords")
+    df.drop(columns=["job_title", "index", "rating"], inplace=True, errors="ignore")
+    return df

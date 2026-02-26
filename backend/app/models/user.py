@@ -2,7 +2,6 @@ from backend.app.db.database import Base
 from sqlalchemy import Column, DateTime, String, Enum, Boolean
 from sqlalchemy.dialects.mssql import UNIQUEIDENTIFIER
 import uuid
-from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime
 from sqlalchemy.sql import func
 import enum
