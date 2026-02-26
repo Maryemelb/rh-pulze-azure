@@ -30,4 +30,4 @@ jobs:
         run: uv sync --locked --all-extras --dev
 
       - name: Exécuter les tests
-        run: pytest -v
+        run: uv run pytest -v
