@@ -6,11 +6,10 @@ from backend.app.services.authService import login
 from backend.app.db.dependencies import getdb
 
 router=APIRouter(
-    prefix="/Auth",
-    tags=["Auth"]
+    prefix="/health",
+    tags=["health"]
 )
 
-@router.post('/login')
-async def signin(user: SigninUser, response:Response,db= Depends(getdb)):
-    await login(db,user, response)
-    return 'succesfully logged in'
+@router.post('/')
+async def health(user: SigninUser, response:Response,db= Depends(getdb)):
+    return 'succesfully '
