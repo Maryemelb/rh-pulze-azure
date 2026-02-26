@@ -20,7 +20,7 @@ def job_df():
             "revenue": "5 milliards MAD",
             "competitors": "Orange Maroc, Maroc Telecom"
             }
-   job_df= pd.DataFrame([job.model_dump()])
+   job_df= pd.DataFrame([job])
    return job_df
 
 def test_predict_service(job_df: pd.DataFrame):
