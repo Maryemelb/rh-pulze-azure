@@ -16,26 +16,21 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version-file: "pyproject.toml"
-          
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
       - name: Install PyTorch (CPU)
         run: pip install torch --index-url https://download.pytorch.org/whl/cpu
 
       - name: Install sentence-transformers
         run: pip install sentence-transformers
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-
-      - name: Cache UV dependencies
-        uses: actions/cache@v3
-        with:
-          path: .cache/uv
-          key: ${{ runner.os }}-uv-${{ hashFiles('pyproject.toml') }}
-          
-      - name: Install the project
+      - name: Install the project dependencies
         run: uv sync --locked --all-extras --dev
+
+      - name: Set PYTHONPATH
+        run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
 
       - name: Exécuter les tests
         run: uv run pytest -v
-        env:
-         PYTHONPATH: ${{ github.workspace }}
