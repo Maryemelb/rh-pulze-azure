@@ -20,6 +20,13 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v7
 
+      - name: Install CPU PyTorch
+        run: torch --index-url https://download.pytorch.org/whl/cpu
+
+      # Add sentence-transformers now that torch is installed
+      - name: Add sentence-transformers
+        run: uv add sentence-transformers
+
       - name: Cache UV dependencies
         uses: actions/cache@v3
         with:
