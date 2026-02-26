@@ -1,4 +1,3 @@
-uv.lock
 *.log
 .venv
 .env
@@ -14,3 +13,4 @@ terraform/main.tf
 backend/app/data/.~lock.cleaned_jobs.csv#
 .logs
 logs/
+backend/app/data/embedding_db

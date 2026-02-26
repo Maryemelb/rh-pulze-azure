@@ -18,3 +18,4 @@ backend/app/data/.~lock.cleaned_jobs.csv#
 backend/app/data/cleaned_jobs.csv
 backend/app/data/uncleaned-ds-jobs.csv
 logs/
+backend/app/data/embedding_db
