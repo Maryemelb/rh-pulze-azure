@@ -88,4 +88,4 @@ def run_training_pipeline():
     # Save pipeline for future use
     joblib.dump(pipeline, "backend/app/saved_model/rf_model.pkl")
 
-run_training_pipeline()
+# run_training_pipeline()
