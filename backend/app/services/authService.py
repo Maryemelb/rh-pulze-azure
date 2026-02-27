@@ -1,6 +1,6 @@
 
 
-from http.client import HTTPException
+from fastapi import HTTPException
 from fastapi import Depends, Request, Response
 from requests import Session
 from backend.app.db.dependencies import getdb
@@ -66,7 +66,7 @@ def create_token(email:str, role:str):
         'email': email,
          'role': role
     }
-    return jwt.encode(payload=payload, key=os.getenv('jwt_secret_key'), algorithm=os.getenv('algorithm'))
+    return jwt.encode(payload=payload, key=os.getenv('JWT'), algorithm=os.getenv('algorithm'))
 
 
 
@@ -79,12 +79,14 @@ def get_current_user(request: Request, db: Session = Depends(getdb)):
         raise HTTPException(status_code=401, detail="Token missing")
 
     try:
-        payload = jwt.decode(token, key=os.getenv("JWT"), algorithms=["HS256"])
-        user_id = payload.get("id")
+        payload = jwt.decode(token, key=os.getenv("JWT"), algorithms=os.getenv('algorithm'))
+        user_email = payload.get("email")
+        print('heloooooooooooooooooooo')
+        print(user_email)
     except:
         raise HTTPException(status_code=401, detail="Invalid or expired token")
 
-    user = db.query(User).filter(User.id == user_id).first()
+    user = db.query(User).filter(User.email == user_email).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
