@@ -54,5 +54,29 @@ def run_ner_extraction(data_path, output_path, limit=100):
     print(f"\nExtraction complete. Saved {len(df_subset)} records to {output_path}")
 
 
+def extract_skills_for_one_job(description1: str):
+    client = authenticate_client()
+
+    print(f"Extracting skills for jobs using Azure NER...")
+    skills_list = []
+    description = str(description1)[:1000]  # 1000 chars
+    try:
+        response = client.recognize_entities([description])
+        doc = response[0]
+
+        if not doc.is_error:
+            skills_list = [
+                entity.text
+                for entity in doc.entities
+                if entity.category in ["Skill", "Product"]
+            ]
+            skills_list = sorted(set(skills_list))  # remove duplicates
+    except Exception as e:
+        print(f"Error processing description: {e}")
+
+    time.sleep(1.0)
+    print(skills_list)
+    return skills_list
+
 if __name__ == "__main__":
     run_ner_extraction("backend/app/data/cleaned_jobs.csv", "backend/app/data/dataset_with_skills.csv", limit=5)

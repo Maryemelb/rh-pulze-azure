@@ -1,5 +1,5 @@
 from backend.app.db.database import Base
-from sqlalchemy import Column, DateTime, String, Enum, Boolean
+from sqlalchemy import Column, DateTime, Integer, String, Enum, Boolean
 from sqlalchemy.dialects.mssql import UNIQUEIDENTIFIER
 import uuid
 from datetime import datetime
@@ -11,7 +11,7 @@ class UserRole(str,enum.Enum):
 
 class User(Base):
     __tablename__= "Users"
-    id = Column(UNIQUEIDENTIFIER, index= True, primary_key=True, default=uuid.uuid4)
+    id= Column(Integer, primary_key=True)
     email = Column(String, nullable= False)
     hashedPassword = Column(String)
     role = Column(Enum(UserRole), default=UserRole.USER, nullable=False)

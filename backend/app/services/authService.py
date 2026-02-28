@@ -23,7 +23,6 @@ async def create_new_user(db: Session, user: CreateUser):
     
     hashed_password= hash_password(user.password)
     new_user= User(
-        id= uuid.uuid4(),
         email= user.email,
         hashedPassword= hashed_password
 
@@ -79,7 +78,7 @@ def get_current_user(request: Request, db: Session = Depends(getdb)):
         raise HTTPException(status_code=401, detail="Token missing")
 
     try:
-        payload = jwt.decode(token, key=os.getenv("JWT"), algorithms=os.getenv('algorithm'))
+        payload = jwt.decode(token, key=os.getenv("JWT"), algorithms=[os.getenv('algorithm')])
         user_email = payload.get("email")
         print('heloooooooooooooooooooo')
         print(user_email)

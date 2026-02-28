@@ -5,7 +5,6 @@ import pandas as pd
 from backend.app.ml.training_pipeline import frequency_encoding
 
 def predict_salary(df: pd.DataFrame ):
-    print('hi')
     df = df.rename(columns={
     "job_title": "Job Title",
     "salary_estimate": "Salary Estimate",
@@ -24,7 +23,6 @@ def predict_salary(df: pd.DataFrame ):
 })
 
     df=process_single_row(df)
-    print(type(df))
     model= joblib.load('backend/app/saved_model/rf_model.pkl')
     salary_predict= model.predict(df)
     print(salary_predict[0])
