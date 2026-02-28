@@ -1,9 +1,8 @@
 services:
-
   backend_rh:
     build:
       context: ./
-      dockerfile: infra/docker/Dockerfile
+      dockerfile: infra/docker/backend.Dockerfile
     container_name: backend-rh-pulze
     volumes:
       - ./backend:/app/backend
