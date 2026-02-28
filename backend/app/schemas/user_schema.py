@@ -6,7 +6,7 @@ class CreateUser(BaseModel):
     password: str
 
 class UserResponse(BaseModel):
-    id: str
+    id: int
     email: EmailStr
     role: str
 

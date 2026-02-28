@@ -12,8 +12,18 @@ from sklearn.metrics import r2_score, mean_absolute_error
 from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
 from backend.app.ml.data_processing.embedding import generate_embeddings
 import pandas as pd
+import mlflow
+import mlflow.artifacts
+import os
+from dotenv import load_dotenv
+
+model_dir = "backend/app/saved_model"
+os.makedirs(model_dir, exist_ok=True)
+model_path = os.path.join(model_dir, "rf_model.pkl")
 
 
+mlflow.set_tracking_uri(os.getenv('MLFLOW_TRACKING_URL'))
+mlflow.set_experiment("rh-pulze-experience")
 def frequency_encoding(X):
         X = X.copy()
         for col in X.columns:
@@ -22,10 +32,9 @@ def frequency_encoding(X):
         return X
 
 def run_training_pipeline():
-
+  with mlflow.start_run(run_name="training_rf"):
     df=pd.read_csv("backend/app/data/cleaned_jobs.csv")
-
-
+    mlflow.log_param( 'training_columns',df.columns)
     X= df.drop(columns=["Salary Estimate", "Job Title","job_role"], errors='ignore')
     df.drop(columns=["Job Title", "index", "Rating"], inplace=True, errors='ignore')
     print(X.shape)
@@ -37,23 +46,6 @@ def run_training_pipeline():
 
     frequency_transformer = FunctionTransformer(frequency_encoding)
     text_transformer= FunctionTransformer(generate_embeddings)
-
-    # model=RandomForestRegressor(max_depth=20, verbose=2)
-
-    # model.fit(X_train,y_train)
-
-    # y_predict= model.predict(X_test)
-
-    # mae= mean_absolute_error(y_test, y_predict)
-    # r2= r2_score(y_test, y_predict)
-    # print(mae)
-    # print(r2)
-
-    # joblib.dump(model, 'backend/app/saved_model/rf_model.pkl')
-
-    # model= joblib.load('backend/app/saved_model/rf_model.pkl')
-
-    # df.head()
     categorial_columns= ['Company Name','Location','Competitors', 'Headquarters', 'Size', 'Type of ownership', 'Industry', 'Sector']
 
     hot_encode_columns= ["Type of ownership"]
@@ -76,7 +68,6 @@ def run_training_pipeline():
         ('model', RandomForestRegressor(max_depth=20, random_state=42))
     ])
 
-    # Train once
     pipeline.fit(X_train, y_train)
 
     y_pred = pipeline.predict(X_test)
@@ -84,8 +75,13 @@ def run_training_pipeline():
     r2 = r2_score(y_test, y_pred)
     print(f"MAE: {mae}")
     print(f"R2: {r2}")
-
+    metrics={
+        'r2': r2,
+        'mae' : mae
+    }
+    mlflow.log_metrics(metrics)
     # Save pipeline for future use
     joblib.dump(pipeline, "backend/app/saved_model/rf_model.pkl")
+    mlflow.log_artifact(local_path=model_path, artifact_path="models")
 
-# run_training_pipeline()
+run_training_pipeline()

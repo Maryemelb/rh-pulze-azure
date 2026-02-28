@@ -1,11 +1,11 @@
 
 
-from fastapi import Session
 from backend.app.models.jobs import Jobs
 from backend.app.schemas.job_schema import JobCreate
 
+from requests import Session
 
-def addjob(db: Session,job: JobCreate, response):
+async def addjob(db: Session,job: JobCreate):
     #pydantic to scheme
     new_job = Jobs(**job.model_dump())
 
@@ -16,7 +16,7 @@ def addjob(db: Session,job: JobCreate, response):
         'message': 'job added succesfully'
     }
 
-def getJobs(db: Session,job: JobCreate):
+async def getJobs(db: Session,job: JobCreate):
     jobs= db.query(Jobs).all()
     if jobs is None:
         print('j')
