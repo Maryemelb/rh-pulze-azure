@@ -1,49 +1,54 @@
 services:
   backend_rh:
     build:
-      context: ./
+      context: ../..
       dockerfile: infra/docker/backend.Dockerfile
     container_name: backend-rh-pulze
     volumes:
-      - ./backend:/app/backend
-      - ./infra/airflow:/app/infra/airflow
-      - ./infra/mlflow:/app/infra/mlflow
-      - ./.github:/app/.github
-      - ./data:/app/data
+      - ../../backend:/app/backend
+      - ../../infra/airflow:/app/infra/airflow
+      - ../../infra/mlflow:/app/infra/mlflow
+      - ../../.github:/app/.github
+      - ../../data:/app/data
 
     working_dir: /app
+    env_file:
+      - ../../backend/.env
     environment:
       - PYTHONUNBUFFERED=1
       - CHROMA_PATH=/app/vector_db/chroma_storage/embedding_db
-    restart: on-failure
+      - DATABASE_URL=postgresql://postgres:postgres@db_rh:5432/db-maryem
+      - MLFLOW_TRACKING_URL=http://mlflow_rh:5000
+    ports:
+      - "8000:8000"
 
   db_rh:
     image: postgres:15-alpine
     container_name: rh_pulze_db
     environment:
-      - POSTGRES_USER=${DATABASE_USER}
-      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
-      - POSTGRES_DB=${DATABASE_NAME}
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=db-maryem
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
   frontend_rh:
-    build: ../frontend-rh-pulze
+    build: ../../../frontend-rh-pulze
     image: "frontend_rh_pulze"
     ports: 
       - "3001:3000"
     environment:
       - NEXT_PUBLIC_BACKEND_API=http://backend:8000
     volumes:
-      - ../frontend-rh-pulze/src:/app/src  
-      - ../frontend-rh-pulze/public:/app/public 
-      - ../frontend-rh-pulze/package.json:/app/package.json  
-      - ../frontend-rh-pulze/package-lock.json:/app/package-lock.json
+      - ../../../frontend-rh-pulze/src:/app/src  
+      - ../../../frontend-rh-pulze/public:/app/public 
+      - ../../../frontend-rh-pulze/package.json:/app/package.json  
+      - ../../../frontend-rh-pulze/package-lock.json:/app/package-lock.json
     depends_on:
       - backend_rh
 
   chromadb_rh:
-    image: chromadb/chroma
+    image: chromadb/chroma:0.4.15
     container_name: chromadb
     ports:
       - "8005:8000"
@@ -56,6 +61,16 @@ services:
       context: ../..
       dockerfile: infra/docker/mlflow.Dockerfile
     container_name: mlflow_server
+    command: >
+      mlflow server
+      --host 0.0.0.0
+      --port 5000
+      --backend-store-uri sqlite:///mlflow.db
+      --default-artifact-root /mlflow/artifacts
+      --serve-artifacts
+      --allowed-hosts 0.0.0.0
+    environment:
+      - MLFLOW_TRACKING_INSECURE_TLS=true
     ports:
       - "5000:5000"
     volumes:
@@ -63,8 +78,8 @@ services:
       - ../../mlflow.db:/mlflow/mlflow.db
     restart: always
 volumes:
-  chroma_rh:
-  db_rh:
+  chroma_data:
+  postgres_data:
   
   
   

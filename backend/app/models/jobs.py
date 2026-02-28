@@ -10,9 +10,9 @@ class Jobs(Base):
     __tablename__="jobs"
     # id = Column(UNIQUEIDENTIFIER, index= True, primary_key=True, default=uuid.uuid4)
     id= Column(Integer, primary_key=True)
-    job_title=Column(String, nullable= False),
-    description=Column(String, nullable= True),
-    # skills=Column(String, nullable= True),
+    job_title=Column(String, nullable= False)
+    description=Column(String, nullable= True)
+    # skills=Column(String, nullable= True)
     salary_estimate= Column(String, nullable= False)
     job_description= Column(String, nullable= False)
     rating= Column(Float, nullable= False)
