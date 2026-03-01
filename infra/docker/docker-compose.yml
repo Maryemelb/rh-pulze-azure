@@ -21,6 +21,9 @@ services:
       - MLFLOW_TRACKING_URL=http://mlflow_rh:5000
     ports:
       - "8000:8000"
+    depends_on:
+      - mlflow_rh
+      - db_rh
 
   db_rh:
     image: postgres:15-alpine
@@ -38,14 +41,14 @@ services:
     ports: 
       - "3001:3000"
     environment:
-      - NEXT_PUBLIC_BACKEND_API=http://backend:8000
-    volumes:
-      - ../../../frontend-rh-pulze/src:/app/src  
-      - ../../../frontend-rh-pulze/public:/app/public 
-      - ../../../frontend-rh-pulze/package.json:/app/package.json  
-      - ../../../frontend-rh-pulze/package-lock.json:/app/package-lock.json
+      - NEXT_PUBLIC_BACKEND_API=http://localhost:8000
+      - NEXT_EXPERIMENTAL_TURBOPACK=1
+      - NEXT_PUBLIC_BACKEND_DOCKER=http://backend_rh:8000
+
     depends_on:
       - backend_rh
+    command: ["npx", "next", "dev", "-H", "0.0.0.0"]
+
 
   chromadb_rh:
     image: chromadb/chroma:0.4.15
@@ -67,10 +70,9 @@ services:
       --port 5000
       --backend-store-uri sqlite:///mlflow.db
       --default-artifact-root /mlflow/artifacts
-      --serve-artifacts
-      --allowed-hosts 0.0.0.0
     environment:
-      - MLFLOW_TRACKING_INSECURE_TLS=true
+      # This allows MLflow to accept internal Docker traffic
+      - MLFLOW_HTTP_HOST=0.0.0.0
     ports:
       - "5000:5000"
     volumes:
