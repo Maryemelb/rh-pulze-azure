@@ -21,10 +21,11 @@ app = FastAPI()
 Base.metadata.create_all(bind=engine)
 
 
-origins=[
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://backend:8000"
+origins = [
+    "http://localhost:3000",   # local dev
+    "http://localhost:3001",   # local dev alternative
+    "http://backend_rh:3000",  # if frontend container accesses backend
+    "http://frontend_rh:3001", # or whatever the Docker frontend hostname is
 ]
 app.add_middleware(
     CORSMiddleware,

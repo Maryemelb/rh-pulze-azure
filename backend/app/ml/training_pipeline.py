@@ -1,3 +1,4 @@
+
 import sys
 from pathlib import Path
 import joblib
@@ -16,14 +17,29 @@ import mlflow
 import mlflow.artifacts
 import os
 from dotenv import load_dotenv
+load_dotenv()
+
+###################################
+# import requests
+# original_request = requests.Session.request
+
+# def patched_request(self, method, url, **kwargs):
+#     if kwargs.get("headers") is None:
+#         kwargs["headers"] = {}
+#     kwargs["headers"]["Host"] = "localhost"
+#     return original_request(self, method, url, **kwargs)
+
+# requests.Session.request = patched_request
+#########################
+
 
 model_dir = "backend/app/saved_model"
 os.makedirs(model_dir, exist_ok=True)
 model_path = os.path.join(model_dir, "rf_model.pkl")
 
 
-mlflow.set_tracking_uri(os.getenv('MLFLOW_TRACKING_URL'))
-mlflow.set_experiment("rh-pulze-experience")
+
+
 def frequency_encoding(X):
         X = X.copy()
         for col in X.columns:
@@ -32,6 +48,9 @@ def frequency_encoding(X):
         return X
 
 def run_training_pipeline():
+  tracking_uri = os.getenv("MLFLOW_TRACKING_URL", "http://mlflow_rh:5000")
+  mlflow.set_tracking_uri(tracking_uri)
+  mlflow.set_experiment("rh-pulze-experience")
   with mlflow.start_run(run_name="training_rf"):
     df=pd.read_csv("backend/app/data/cleaned_jobs.csv")
     mlflow.log_param( 'training_columns',df.columns)
@@ -84,4 +103,4 @@ def run_training_pipeline():
     joblib.dump(pipeline, "backend/app/saved_model/rf_model.pkl")
     mlflow.log_artifact(local_path=model_path, artifact_path="models")
 
-run_training_pipeline()
+# run_training_pipeline()
