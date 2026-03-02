@@ -2,7 +2,7 @@
 
 
 from backend.app.db.database import Base
-from sqlalchemy import UUID, Column, String,Integer,Float
+from sqlalchemy import UUID, Column, String,Integer,Float,Boolean
 from sqlalchemy.dialects.mssql import UNIQUEIDENTIFIER
 import uuid
 
@@ -11,7 +11,8 @@ class Jobs(Base):
     # id = Column(UNIQUEIDENTIFIER, index= True, primary_key=True, default=uuid.uuid4)
     id= Column(Integer, primary_key=True)
     job_title=Column(String, nullable= False)
-    description=Column(String, nullable= True)
+    job_role=Column(String, nullable=True)
+    is_senior= Column(Boolean, default=False)
     # skills=Column(String, nullable= True)
     salary_estimate= Column(String, nullable= False)
     job_description= Column(String, nullable= False)

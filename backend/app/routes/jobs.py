@@ -19,6 +19,6 @@ async def addjobs(job: JobCreate,db= Depends(getdb),current_user: User= Depends(
     return {'response':'succesfully', 'job':job}
 
 @router.get('/')
-async def getjobs(response:Response,db= Depends(getdb),current_user: User= Depends(get_current_user)):
-    jobs =await getJobs(db, response)
+async def getjobs(db= Depends(getdb),current_user: User= Depends(get_current_user)):
+    jobs =await getJobs(db)
     return jobs
