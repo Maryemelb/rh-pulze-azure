@@ -1,11 +1,16 @@
+import sys
+from backend.app.ml import training_pipeline
+
+# Inject frequency_encoding into __main__ so pickle can find it
+import __main__
+__main__.frequency_encoding = training_pipeline.frequency_encoding
+
 import joblib
 from backend.app.schemas.job_schema import JobCreate
 from backend.app.ml.data_processing.processing import process_single_row
 import pandas as pd
-from backend.app.ml.training_pipeline import frequency_encoding
 
 def predict_salary(df: pd.DataFrame ):
-    print('hi')
     df = df.rename(columns={
     "job_title": "Job Title",
     "salary_estimate": "Salary Estimate",
@@ -24,7 +29,6 @@ def predict_salary(df: pd.DataFrame ):
 })
 
     df=process_single_row(df)
-    print(type(df))
     model= joblib.load('backend/app/saved_model/rf_model.pkl')
     salary_predict= model.predict(df)
     print(salary_predict[0])

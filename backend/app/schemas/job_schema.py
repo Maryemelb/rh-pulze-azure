@@ -2,7 +2,6 @@ from pydantic import BaseModel
 from typing import Optional
 
 class JobCreate(BaseModel):
-    index: int
     job_title: str
     salary_estimate: str
     job_description: str
